@@ -7,49 +7,61 @@
 #include <iostream>
 
 
-// Функция изменения размеров окна
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
+
 
 int main() {
-    // Инициализация GLFW
+   
     if (!glfwInit()) {
-        std::cerr << "Ошибка инициализации GLFW" << std::endl;
-        return -1;
+        fprintf(stderr, "EROR start \n");
+        return 1;
     }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     // Создание окна
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Point", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(512, 512, "Main", NULL, NULL);
     if (!window) {
-        std::cerr << "Ошибка создания окна GLFW" << std::endl;
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
 
-    // Инициализация GLEW
-    if (glewInit() != GLEW_OK) {
-        std::cerr << "Ошибка инициализации GLEW" << std::endl;
-        return -1;
+    glewExperimental = GL_TRUE;
+
+    GLenum ret = glewInit();
+    if (GLEW_OK != ret) {
+        fprintf(stderr, "ERROR: GLEW %s\n", glewGetErrorString(ret));
+        return 1;
     }
-
-    // Вывод версии OpenGL
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-
-    // Установка функции изменения размеров окна
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    // Настройка OpenGL
-    glPointSize(10.0f);  // Размер точки
 
     // Главный цикл
     while (!glfwWindowShouldClose(window)) {
+        glClearColor(0.3, 0.3, 0.3, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Рисуем точку
-        glBegin(GL_POINTS);
-        glVertex2f(0.0f, 0.0f);  // Координаты (X, Y)
+        // Рисуем звезду
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.6, 0.2, 0.9);
+        // Координаты (X, Y)
+        glVertex2f(0.0, 0.0); 
+
+        glVertex2f(0.0, 0.8);
+        glVertex2f(0.2, 0.2);
+
+        glVertex2f(0.8, 0.0);
+        glVertex2f(0.2, -0.2);
+
+        glVertex2f(0.0, -0.8);
+        glVertex2f(-0.2, -0.2);
+
+        glVertex2f(-0.8, 0.0);
+        glVertex2f(-0.2, 0.2);
+
+        glVertex2f(0.0, 0.8);
+
         glEnd();
 
         glfwSwapBuffers(window);
